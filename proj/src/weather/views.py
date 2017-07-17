@@ -75,33 +75,33 @@ def get_data(request, *args, **kwargs):
 	return JsonResponse(data)
 
 # Models for data
-# def temps(request):
+def temps(request):
 	
-# 	template_name = 'restaurants/temperatures.html'
-# 	queryset = Temperature.objects.all()
-# 	context = {
-# 		"object_list": queryset
+	template_name = 'restaurants/temperatures.html'
+	queryset = Temperature.objects.all()
+	context = {
+		"object_list": queryset
 
-# 	}
-# 	return render(request, template_name, context)
+	}
+	return render(request, template_name, context)
 
-# def hums(request):
+def hums(request):
 	
-# 	template_name = 'restaurants/humidities.html'
-# 	queryset = Humidity.objects.all()
-# 	context = {
-# 		"object_list": queryset
+	template_name = 'restaurants/humidities.html'
+	queryset = Humidity.objects.all()
+	context = {
+		"object_list": queryset
 
-# 	}
-# 	return render(request, template_name, context)
+	}
+	return render(request, template_name, context)
 
 
-# def rains(request):
+def rains(request):
 	
-# 	template_name = 'restaurants/rains.html'
-# 	queryset = Rain.objects.all()
-# 	context = {
-# 		"object_list": queryset
+	template_name = 'restaurants/rains.html'
+	queryset = Rain.objects.all()
+	context = {
+		"object_list": queryset
 
-# 	}
-# 	return render(request, template_name, context)
+	}
+	return render(request, template_name, context)

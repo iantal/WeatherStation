@@ -16,9 +16,22 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
-from weather.views import home
+from weather.views import home,get_data,about, contact,temp_hum,rain
+from weather.views import ContactView, ChartHomeView, ChartData
+from weather.views import temps,hums,rains
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', home),
+    url(r'^about/$', about),
+    url(r'^contact/$', ContactView.as_view()),
+    url(r'^temp_hum/$', temp_hum),
+    url(r'^rain/$', ChartHomeView.as_view()),
+    url(r'^api/data/$', get_data, name='api-data'),
+    url(r'^api/chart/data/$', ChartData.as_view()),
+    
+    url(r'^temps-api/$', temps),
+    url(r'^hums-api/$', hums),
+    url(r'^rains-api/$', rains),
+
 ]
