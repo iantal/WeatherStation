@@ -7,7 +7,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'proj.settings')
 
 # app = Celery('tasks', backend='rpc://', broker='pyamqp://guest:guest@localhost:8000//')
 # app = Celery('muypicky', backend='rpc://', broker='pyamqp://guest:guest@localhost:8000//')
-app = Celery('proj', backend='rpc://', broker='pyamqp://guest:guest@localhost:5672//')
+app = Celery('tasks', backend='rpc://', broker='pyamqp://guest:guest@localhost:5672//')
 # app = Celery('muypicky')
 
 app.conf.update(

@@ -1,0 +1,34 @@
+# Create your tasks here
+from __future__ import absolute_import, unicode_literals
+from celery import shared_task
+import random
+
+from .models import Temperature, Humidity, Rain
+from json_parser import *
+
+@shared_task
+def insert_random_temp():
+	x = random.uniform(20.0,42.0)
+	y = random.randint(1,5)
+	value = float("{0:.2f}".format(x))
+	start_date = "2017-10-"+str(y)
+	try:
+		Temperature.objects.create(date=start_date,value=value)
+	except:
+		pass
+
+
+# # @shared_task
+# # def insert_temp_and_hum():
+# # 	data = getTempAndHum(channel=298116,api_key='K0S8YEA42QOGSV9D',results=10)
+
+# # 	for item in data:
+# # 		try:
+# # 			Temperature.objects.create(date=item[0],value=item[2])
+# # 			Humidity.objects.create(date=item[0],value=item[1])
+# # 		except:
+# # 			pass
+# Create your tasks here
+
+
+

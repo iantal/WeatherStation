@@ -1,0 +1,12 @@
+celery -A proj beat -l info -S django
+
+
+celery -A proj worker -l info -S django
+
+
+service rabbitmq-serer start
+
+
+
+python manage.py migrate django_celery_results
+
