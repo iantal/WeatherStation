@@ -8,6 +8,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .models import Temperature, Humidity, Rain
+
+from django.forms.models import model_to_dict
+from django.core import serializers
+import json
 # Create your views here.
 
 #function based view
@@ -66,42 +70,16 @@ class ChartData(APIView):
         }
         return Response(data)
 
+class THHomeView(View):
+	def get(self, request, *args, **kwargs):
+		return render(request, 'th.html',{})
 
-def get_data(request, *args, **kwargs):
-	data = {
-	'user':'miki',
-	'sal':1000
-	}
-	return JsonResponse(data)
+class THData(APIView):
+    authentication_classes = []
+    permission_classes = []
 
-# Models for data
-def temps(request):
-	
-	template_name = 'restaurants/temperatures.html'
-	queryset = Temperature.objects.all()
-	context = {
-		"object_list": queryset
+    def get(self, request, format=None):
+        response = JsonResponse(dict(
+        	temps=list(Temperature.objects.values('date', 'value'))))
+        return response
 
-	}
-	return render(request, template_name, context)
-
-def hums(request):
-	
-	template_name = 'restaurants/humidities.html'
-	queryset = Humidity.objects.all()
-	context = {
-		"object_list": queryset
-
-	}
-	return render(request, template_name, context)
-
-
-def rains(request):
-	
-	template_name = 'restaurants/rains.html'
-	queryset = Rain.objects.all()
-	context = {
-		"object_list": queryset
-
-	}
-	return render(request, template_name, context)

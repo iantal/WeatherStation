@@ -1,0 +1,78 @@
+
+{% extends "base.html" %}
+
+{% block query %}
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            var myOffset = new Date().getTimezoneOffset();
+            function getChartDate(d) {
+                return Date.UTC(d.substring(0,4), d.substring(5,7)-1, 
+                    d.substring(8,10), d.substring(11,13), d.substring(14,16), d.substring(17,19)) - (myOffset * 60000);
+            }
+
+            var endpoint = '/api/temperature/data/'
+            var temps = []
+            
+            $.ajax({
+                method: "GET",
+                url: endpoint,
+                success: function(data){
+                    temps = data.temps;
+                    tt = []
+                    var chart;
+                    for (var i = 0; i < temps.length; i++) {
+                        temps[i].date = getChartDate(temps[i].date);
+                        temps[i].value = parseFloat(temps[i].value);
+
+                        
+                        tt.push([
+                            temps[i].date,temps[i].value
+                        ]);
+                       
+                        tt.sort()
+
+                    }
+                    
+                    chart = new Highcharts.StockChart({
+                        chart : {
+                            renderTo : 'container'
+                        },
+
+                        rangeSelector : {
+                            selected : 1
+                        },
+
+                        title : {
+                            text : 'Temperature'
+                        },
+                        
+                        series : [{
+                            name : 'Temp',
+                            data : tt,
+                            tooltip: {
+                                valueDecimals: 2
+                            }
+                        }]
+                    });
+
+                    
+                },
+                error: function(error_data){
+                    console.log(error_data)
+                }
+            })
+
+  
+
+        </script>
+    </head>
+    <body>
+<script src="http://code.highcharts.com/stock/highstock.js"></script>
+<script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
+{% endblock %}
+
+{% block content %}
+<div id="container" style="height: 500px; min-width: 500px"></div>
+    </body>
+</html>
+{% endblock %}
