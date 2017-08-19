@@ -3,10 +3,59 @@
 {% block imports %}
 	{% include 'snippets/css.html' %}
 	{% include 'snippets/js.html' %}
+	<link rel="stylesheet" href="/static/css/jquery.datetimepicker.min.css"/>
+	<script src="/static/js/jquery.js"></script>
+	<script src="/static/js/jquery.datetimepicker.full.js"></script>
 	<!-- {% include 'snippets/highchart.html' %} -->
 {% endblock %}
 
 {% block content %}
 <h1>About</h1>
+<input id="datepicker_from">
+<input id="datepicker_to">
+
+<button onclick="handle()">Copy Text</button>
+
+<script>
+	$("#datepicker_from").datetimepicker();
+	$("#datepicker_to").datetimepicker();
+	
+	function split_string_dash(str1){
+		return str1.split("/");
+	}
+
+	function split_string_space(str1){
+		return str1.split(" ");
+	}	
+
+	function get_array_of_parsed_date(date_str){
+		var res = split_string_dash(date_str);
+	    var rr = split_string_space(res[2]);
+	    return [res[0], res[1], rr[0]];
+	}
+
+	function get_formated_date(date_str){
+		res = get_array_of_parsed_date(date_str);
+
+		var year = res[0];
+	    var month = res[1];
+	    var day = res[2];
+	    // yyyy-mm-ddThh:mm:ssZ
+	    d = year+"-"+month+"-"+day+"T"+"00:00:00Z";
+	    return d;
+	}
+
+	function handle() {
+	    var start = document.getElementById("datepicker_from").value;
+	    var end = document.getElementById("datepicker_to").value;
+
+	    start_date = get_formated_date(start);
+	    end_date = get_formated_date(end);
+
+	    document.write(start_date+"         "+end_date);
+	}
+
+	
+</script>
 
 {% endblock content %}

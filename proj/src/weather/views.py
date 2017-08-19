@@ -39,6 +39,11 @@ def temp_hum(request):
 	context = {}
 	return render(request, "temp_hum.html",context)
 
+
+def time(request):
+	context = {}
+	return render(request, "time.html",context)
+
 def rain(request):
 	context = {}
 	return render(request, "rain.html",context)
