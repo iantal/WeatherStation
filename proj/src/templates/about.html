@@ -4,17 +4,37 @@
 	{% include 'snippets/css.html' %}
 	{% include 'snippets/js.html' %}
 	<link rel="stylesheet" href="/static/css/jquery.datetimepicker.min.css"/>
+	<link rel="stylesheet" href="/static/css/base.css"/>
 	<script src="/static/js/jquery.js"></script>
 	<script src="/static/js/jquery.datetimepicker.full.js"></script>
 	<!-- {% include 'snippets/highchart.html' %} -->
 {% endblock %}
 
 {% block content %}
-<h1>About</h1>
-<input id="datepicker_from">
-<input id="datepicker_to">
+<!-- <div id="container">  
+  <div class="row">    
+    
+    <div class="col-sm-12">
+      	<input id="datepicker_from">
+		<input id="datepicker_to">
+		<button onclick="handle()">GO</button>
+    </div>    
+  </div>  
+</div> -->
 
-<button onclick="handle()">GO</button>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3" style="margin-top: 0px; background-color: yellow;">A </div>
+
+        <div class="col-md-6" style="margin-top: 0px; background-color: red;">B
+            
+        </div>
+
+        <div class="col-md-3" style="margin-top: 0px; background-color: yellow;">C </div>
+        
+      </div>
+    </div>
+
 
 <script>
 	$("#datepicker_from").datetimepicker();
@@ -192,11 +212,10 @@
 <script src="http://code.highcharts.com/stock/highstock.js"></script>
 <script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
 
-<div id="container" style="position:fixed;top:200px;bottom:50px;left:5%;right:5%;">
+<!-- <div id="container" style="position:fixed;top:200px;bottom:50px;left:5%;right:5%;">
     <br>
     Highstock Chart Here
     <br>
-</div>
-</body>
-</html>
+</div> -->
+
 {% endblock content %}
