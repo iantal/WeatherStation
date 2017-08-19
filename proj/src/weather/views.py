@@ -85,6 +85,8 @@ class THData(APIView):
 
     def get(self, request, format=None):
         response = JsonResponse(dict(
-        	temps=list(Temperature.objects.values('date', 'value'))))
+        	# temps=list(Temperature.objects.values('date', 'value'))))
+        	temps = list(Temperature.objects.values('date', 'value'))))
+        	# temps = list(Temperature.objects.values('date', 'value').filter(date__gte='2017-07-06T00:00:00Z', date__lte='2017-07-06T15:00:00Z'))))
         return response
 
