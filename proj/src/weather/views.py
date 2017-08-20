@@ -67,8 +67,8 @@ class ChartData(APIView):
     permission_classes = []
 
     def get(self, request, format=None):
-        labels = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Satuday", "Sunday"]
-        default_items = [2.1, 2.2, 2, 3, 4, 2,1.5]
+        labels = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+        default_items = list(Rain.objects.values('date', 'value'));
         data = {
                 "labels": labels,
                 "default": default_items,

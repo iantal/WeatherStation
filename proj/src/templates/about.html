@@ -4,36 +4,27 @@
 	{% include 'snippets/css.html' %}
 	{% include 'snippets/js.html' %}
 	<link rel="stylesheet" href="/static/css/jquery.datetimepicker.min.css"/>
-	<link rel="stylesheet" href="/static/css/base.css"/>
+	
 	<script src="/static/js/jquery.js"></script>
 	<script src="/static/js/jquery.datetimepicker.full.js"></script>
 	<!-- {% include 'snippets/highchart.html' %} -->
 {% endblock %}
 
 {% block content %}
-<!-- <div id="container">  
-  <div class="row">    
-    
-    <div class="col-sm-12">
-      	<input id="datepicker_from">
-		<input id="datepicker_to">
-		<button onclick="handle()">GO</button>
-    </div>    
-  </div>  
-</div> -->
-
-    <div class="container">
-      <div class="row">
-        <div class="col-md-3" style="margin-top: 0px; background-color: yellow;">A </div>
-
-        <div class="col-md-6" style="margin-top: 0px; background-color: red;">B
-            
-        </div>
-
-        <div class="col-md-3" style="margin-top: 0px; background-color: yellow;">C </div>
-        
-      </div>
-    </div>
+<div class="container" style="margin-top: 0px; background-color: #e0e0e0;width:80%;left:10%;right:10%;">
+	<div class="row" style="font-family: 'Abril Fatface', serif; font-weight: bold;font-size:16px;">
+			<bold>Start Date</bold>
+			<input id="datepicker_from">
+			<bold>End Date</bold>
+			<input id="datepicker_to">
+			<button onclick="handle()">GO</button>
+	</div>
+	<div id="chart-container" style="position:fixed;top:180px;bottom:50px;width:80%;left:10%;right:10%;">
+    	<br>
+    	Highstock Chart Here
+    	<br>
+	</div>
+</div>
 
 
 <script>
@@ -173,7 +164,7 @@
 	            var chart;
 	            chart = new Highcharts.StockChart({
                         chart : {
-                            renderTo : 'container'
+                            renderTo : 'chart-container'
                         },
 
                         rangeSelector : {

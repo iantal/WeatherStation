@@ -1,70 +1,223 @@
 {% extends 'base.html' %}
 
 {% block query%}
-    <script>
-        var endpoint = '/api/chart/data/'
-        var defaultData = []
-        var labels = []
+<script>
+
+    var endpoint = '/api/chart/data/'
+    var rdata = []
+    var labels = []
+    var chart_data = []
+
+
+    function addYear() {
+        var currentYear = new Date().getFullYear();  
+
+        for (var i = 1; i <= 10; i++ ) {
+            $("#timeSelector").append(
+                $("<option></option>")
+                .attr("value", currentYear)
+                .text(currentYear)
+            );
+        currentYear--;
+        }
+    }
+
+    addYear();
+
+    function split_string_dash(str1){
+        return str1.split("/");
+    }
+
+    function split_string_space(str1){
+        return str1.split(" ");
+    }   
+
+    function get_array_of_parsed_date(date_str){
+        var res = split_string_dash(date_str);
+        var rr = split_string_space(res[2]);
+        return [res[0], res[1], rr[0]];
+    }
+
+    function get_formated_date(date_str){
+        res = get_array_of_parsed_date(date_str);
+
+        var year = res[0];
+        var month = res[1];
+        var day = res[2];
+        // yyyy-mm-ddThh:mm:ssZ
+        d = year+"-"+month+"-"+day+"T"+"00:00:00Z";
+        return d;
+    }
+
+    function bubbleSort(a){
+        var swapped;
+        do {
+            swapped = false;
+            for (var i=0; i < a.length-1; i++) {
+                if (a[i].date > a[i+1].date) {
+                    var temp = a[i];
+                    a[i] = a[i+1];
+                    a[i+1] = temp;
+                    swapped = true;
+                }
+            }
+        } while (swapped);
+    }
+
+    function extractYear(str1){
+        return str1.substring(0,4);
+    }
+
+    function extractMonth(str1){
+        return str1.substring(5,7);
+    }
+
+    function handle(){
+        var year = document.getElementById("timeSelector").value.toString();
+        console.log(year);
+
         $.ajax({
             method: "GET",
             url: endpoint,
             success: function(data){
-                labels = data.labels
-                defaultData = data.default
-                setChart()
+                labels = data.labels;
+                rdata = data.default;
+                console.log(rdata);
+                bubbleSort(rdata);
+
+                index = 0;
+
+                for (i = 0; i<rdata.length; i++){
+                    console.log("Extracted year: " + extractYear(rdata[i].date));
+                    if (extractYear(rdata[i].date) === year){
+                        index = i;
+                        break;
+                    }
+                }
+                console.log("Index: " + index);
+                extracted_data = [];
+
+                while(index < rdata.length){
+                    if(extractYear(rdata[index].date) === year){
+                        extracted_data.push(rdata[index]);
+                        index = index + 1;
+                    }
+                    else{
+                        break;
+                    }
+                    
+                }
+
+                total_rain = 0;
+
+                months = {
+                    "01" : 0,
+                    "02" : 0,
+                    "03" : 0,
+                    "04" : 0,
+                    "05" : 0,
+                    "06" : 0,
+                    "07" : 0,
+                    "08" : 0,
+                    "09" : 0,
+                    "10" : 0,
+                    "11" : 0,
+                    "12" : 0
+                }
+
+                console.log(months["01"])
+                for(i = 0; i < extracted_data.length; i++){
+                    month = extractMonth(extracted_data[i].date);
+                    months[month] += parseFloat(extracted_data[i].value);
+                }
+                console.log(months);
+
+                chart_data = [
+                    months["01"],
+                    months["02"],
+                    months["03"],
+                    months["04"],
+                    months["05"],
+                    months["06"],
+                    months["07"],
+                    months["08"],
+                    months["09"],
+                    months["10"],
+                    months["11"],
+                    months["12"]
+
+                ];
+               // chart_data = [months.01, months.02];
+               // console.log(chart_data);
+                
+                $('#myChart').remove(); 
+                $('iframe.chartjs-hidden-iframe').remove(); 
+                $('#graph').append('<canvas id="myChart"><canvas>'); 
+                
+                setChart();
+                
+
+                // myChart.destroy();
+
             },
             error: function(error_data){
                 console.log(error_data)
             }
         })
+        
+    }
 
-function setChart(){        
-    var ctx = document.getElementById("myChart").getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: '# of Votes',
-                data: defaultData,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
+    function setChart(){        
+        var ctx = document.getElementById("myChart").getContext('2d');
+
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Month',
+                    data: chart_data,
+                    backgroundColor: [
+                        '#5c6bc0',
+                        '#5c6bc0',
+                        '#5c6bc0',
+                        '#5c6bc0',
+                        '#5c6bc0',
+                        '#5c6bc0',
+                        '#5c6bc0',
+                        '#5c6bc0',
+                        '#5c6bc0',
+                        '#5c6bc0',
+                        '#5c6bc0',
+                        '#5c6bc0'
+                    ]
                 }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
             }
-        }
-    });
-}
-    </script>
+        });
+
+    }
+</script>
 {% endblock query%}
 
 
 {% block content %}
+<div class="container" id="graph" style="margin-top: 0px; background-color: #e0e0e0;width:80%;left:10%;right:10%;">
+    <div class="row" style="font-family: 'Abril Fatface', serif; font-weight: bold;font-size:16px;">
+            <bold>Year</bold>
+            <select id="timeSelector"></select>
+            <button onclick="handle()">GO</button>
+    </div>
 
-<div class="row" style="position: fixed; height:40vh; width:80vw; left:10%;right:10%;">
     <canvas id="myChart"></canvas>
-</div>
 
+</div>
 {% endblock content %}
