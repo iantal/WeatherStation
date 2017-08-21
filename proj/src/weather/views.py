@@ -49,6 +49,7 @@ def rain(request):
 	return render(request, "rain.html",context)
 
 
+
 class ContactView(View):
 	def get(delf, request, *args, **kwargs):
 		context = {}
@@ -57,6 +58,19 @@ class ContactView(View):
 
 
 #ChartJS
+
+class RainYearData(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request, year, format=None):
+        labels = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+        default_items = list(Rain.objects.values('date', 'value').filter(date__startswith=year));
+        data = {
+        	"labels" : labels,
+            "default": default_items,
+        }
+        return Response(data)
 
 class ChartHomeView(View):
 	def get(self, request, *args, **kwargs):
