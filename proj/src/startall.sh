@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /root/Documents/GIT/WeatherStation/proj/
+cd /root/Documents/GITHUB/WeatherStation/proj/
 source bin/activate
 cd src
 
