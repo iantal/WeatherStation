@@ -24,7 +24,7 @@ def home(request):
 	}
 	return render(request, "home.html", context)
 
-def about(request):
+def temperature(request):
 	some_list = [5,612,3,4]
 	context = {
 	}
@@ -49,11 +49,16 @@ def rain(request):
 	return render(request, "rain.html",context)
 
 
-
-class ContactView(View):
+class TemperatureView(View):
 	def get(delf, request, *args, **kwargs):
 		context = {}
-		return render(request, "contact.html", context)
+		return render(request, "temperature.html", context)
+
+
+class HumidityView(View):
+	def get(delf, request, *args, **kwargs):
+		context = {}
+		return render(request, "humidity.html", context)
 
 
 
@@ -72,9 +77,43 @@ class RainYearData(APIView):
         }
         return Response(data)
 
+
+class TempData(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request, sy, sm, sd, ey, em, ed, format=None):
+    	start_date = sy + "-" +sm + "-" + sd;
+    	end_date = ey + "-" +em + "-" + ed;
+    	print("S: " + start_date)
+    	print("E: " + end_date)
+        response = JsonResponse(dict(
+        	temps = list(Temperature.objects.values('date', 'value').filter(
+        		date__gte=start_date, date__lte=end_date))))
+        	# temps = list(Temperature.objects.values('date', 'value').filter(date__gte='2017-07-06T00:00:00Z', date__lte='2017-07-06T15:00:00Z'))))
+        return response
+
+
+class HumidityData(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request, sy, sm, sd, ey, em, ed, format=None):
+    	start_date = sy + "-" +sm + "-" + sd;
+    	end_date = ey + "-" +em + "-" + ed;
+    	print("S: " + start_date)
+    	print("E: " + end_date)
+        response = JsonResponse(dict(
+        	temps = list(Humidity.objects.values('date', 'value').filter(
+        		date__gte=start_date, date__lte=end_date))))
+        	
+        return response
+
+
 class ChartHomeView(View):
 	def get(self, request, *args, **kwargs):
 		return render(request, 'rain.html',{})
+
 
 class ChartData(APIView):
     authentication_classes = []
@@ -89,9 +128,11 @@ class ChartData(APIView):
         }
         return Response(data)
 
+
 class THHomeView(View):
 	def get(self, request, *args, **kwargs):
 		return render(request, 'th.html',{})
+
 
 class THData(APIView):
     authentication_classes = []

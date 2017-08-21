@@ -52,34 +52,10 @@
 	    var month = res[1];
 	    var day = res[2];
 	    // yyyy-mm-ddThh:mm:ssZ
-	    d = year+"-"+month+"-"+day+"T"+"00:00:00Z";
+	    // d = year+"-"+month+"-"+day+"T"+"00:00:00Z";
+	    d = year+"/"+month+"/"+day;
 	    return d;
 	}
-
-
-
-	// console.log('a,', a);
-
-	function binarySearch(arr, i) {
-	    var mid = Math.floor(arr.length / 2);
-	    console.log(arr[mid], i);
-	    
-	    if (arr[mid] === i) {
-	        console.log('match', arr[mid], i);
-	        return arr[mid];
-	    } else if (arr[mid] < i && arr.length > 1) {
-	        console.log('mid lower', arr[mid], i);
-	        return binarySearch(arr.splice(mid, Number.MAX_VALUE), i);
-	    } else if (arr[mid] > i && arr.length > 1) {
-	        console.log('mid higher', arr[mid], i);
-	        return binarySearch(arr.splice(0, mid), i);
-	    } else {
-	        console.log('not here', i);
-	        return -1;
-	    }
-	    
-	}
-	// var result = binarySearch(a, 100);
 
 	function bubbleSort(a){
 	    var swapped;
@@ -114,7 +90,8 @@
 	    	alert('Invalid Range')
 	    }
 
-	    var endpoint = '/api/temperature/data/'
+	    var endpoint = '/api/hum/' + start_date + "/" + end_date;
+	    console.log(endpoint);
     	var temps = []
 	    
 	    $.ajax({
@@ -122,44 +99,24 @@
 	        url: endpoint,
 	        success: function(data){
 	            temps = data.temps;
-	           	//temps.sort();
 	            bubbleSort(temps);
-	           	//console.log(temps);
-	          
-	            ok = 0;
-	            index = 0;
-	            for (i = 0; i < temps.length; i++){
-	            	if (temps[i].date > start_date){
-	            		ok = 1;
-	            		index = i;
-	            		break;
-	            	}
-	            	
-	            }
+	           	console.log(temps);
 
 	            var result = [];
+            	for (k = 0; k < temps.length; k++){
 
-	            if (ok){
-	            	console.log("index: " + index);
-	            	for (k = index; k < temps.length; k++){
-	            		if (temps[k].date <= end_date){
+	            		temps[k].date = getChartDate(temps[k].date);
+                        temps[k].value = parseFloat(temps[k].value);
+                        
+                        result.push([
+                            temps[k].date,temps[k].value
+                        ]);
 
-		            		temps[k].date = getChartDate(temps[k].date);
-	                        temps[k].value = parseFloat(temps[k].value);
-	                        
-	                        result.push([
-	                            temps[k].date,temps[k].value
-	                        ]);
-
-	                        result.sort()
-	            		}
-	            		else{
-	            			end_index = k;
-	            			break;
-	            		}
-	            	}
-	            	console.log(result);
-		        }
+                        result.sort()
+            		
+            	}
+            	console.log(result);
+		        
 	            	
 	            var chart;
 	            chart = new Highcharts.StockChart({

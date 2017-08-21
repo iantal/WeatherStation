@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block imports %}
+	{% include 'snippets/css.html' %}
+	{% include 'snippets/js.html' %}
+	<link rel="stylesheet" href="/static/css/jquery.datetimepicker.min.css"/>
+	
+	<script src="/static/js/jquery.js"></script>
+	<script src="/static/js/jquery.datetimepicker.full.js"></script>
+	<!-- {% include 'snippets/highchart.html' %} -->
+{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 0px; background-color: #e0e0e0;width:80%;left:10%;right:10%;">
+	<div class="row" style="font-family: 'Abril Fatface', serif; font-weight: bold;font-size:16px;">
+			<bold>Start Date</bold>
+			<input id="datepicker_from">
+			<bold>End Date</bold>
+			<input id="datepicker_to">
+			<button onclick="handle()">GO</button>
+	</div>
+	<div id="chart-container" style="position:fixed;top:180px;bottom:50px;width:80%;left:10%;right:10%;">
+    	<br>
+    	Highstock Chart Here
+    	<br>
+	</div>
+</div>
+
+
+<script>
+	$("#datepicker_from").datetimepicker();
+	$("#datepicker_to").datetimepicker();
+	
+	function split_string_dash(str1){
+		return str1.split("/");
+	}
+
+	function split_string_space(str1){
+		return str1.split(" ");
+	}	
+
+	function get_array_of_parsed_date(date_str){
+		var res = split_string_dash(date_str);
+	    var rr = split_string_space(res[2]);
+	    return [res[0], res[1], rr[0]];
+	}
+
+	function get_formated_date(date_str){
+		res = get_array_of_parsed_date(date_str);
+
+		var year = res[0];
+	    var month = res[1];
+	    var day = res[2];
+	    // yyyy-mm-ddThh:mm:ssZ
+	    // d = year+"-"+month+"-"+day+"T"+"00:00:00Z";
+	    d = year+"/"+month+"/"+day;
+	    return d;
+	}
+
+	function bubbleSort(a){
+	    var swapped;
+	    do {
+	        swapped = false;
+	        for (var i=0; i < a.length-1; i++) {
+	            if (a[i].date > a[i+1].date) {
+	                var temp = a[i];
+	                a[i] = a[i+1];
+	                a[i+1] = temp;
+	                swapped = true;
+	            }
+	        }
+	    } while (swapped);
+	}
+
+	var myOffset = new Date().getTimezoneOffset();
+
+	function getChartDate(d) {
+        return Date.UTC(d.substring(0,4), d.substring(5,7)-1, 
+            d.substring(8,10), d.substring(11,13), d.substring(14,16), d.substring(17,19)) - (myOffset * 60000);
+    }
+
+	function handle() {
+	    var start = document.getElementById("datepicker_from").value;
+	    var end = document.getElementById("datepicker_to").value;
+
+	    start_date = get_formated_date(start);
+	    end_date = get_formated_date(end);
+
+	    if(start_date > end_date){
+	    	alert('Invalid Range')
+	    }
+
+	    var endpoint = '/api/temp/' + start_date + "/" + end_date;
+	    console.log(endpoint);
+    	var temps = []
+	    
+	    $.ajax({
+	        method: "GET",
+	        url: endpoint,
+	        success: function(data){
+	            temps = data.temps;
+	            bubbleSort(temps);
+	           	console.log(temps);
+
+	            var result = [];
+            	for (k = 0; k < temps.length; k++){
+
+	            		temps[k].date = getChartDate(temps[k].date);
+                        temps[k].value = parseFloat(temps[k].value);
+                        
+                        result.push([
+                            temps[k].date,temps[k].value
+                        ]);
+
+                        result.sort()
+            		
+            	}
+            	console.log(result);
+		        
+	            	
+	            var chart;
+	            chart = new Highcharts.StockChart({
+                        chart : {
+                            renderTo : 'chart-container'
+                        },
+
+                        rangeSelector : {
+                            enabled: false
+                        },
+
+                        title : {
+                            text : 'Entries # ' + result.length 
+                        },
+                        
+                        series : [{
+                            name : 'Temp',
+                            data : result,
+                            marker: {
+				                enabled: null, // auto
+				                radius: 4,
+				                lineWidth: 1,
+				                lineColor: '#FFFFFF'
+				            },
+                            tooltip: {
+                                valueDecimals: 2
+                            }
+                        }]
+                    });
+	    	}
+	    
+		})
+	}
+
+	
+
+</script>
+
+
+
+<script src="http://code.highcharts.com/stock/highstock.js"></script>
+<script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
+
+
+{% endblock content %}
